@@ -1,27 +1,39 @@
 # C -- 避免陷阱，提高品質的方法
 
 * [C/C++ 語言新手十三誡 (PTT)](https://www.ptt.cc/bbs/C_and_CPP/M.1465304337.A.9F2.html)
+* [《C陷阱與缺陷》 閱讀總結](https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/429214/)
 * [高等C語言](https://shengwen1997.gitbooks.io/program_with_c/content/index.html)
 * [C语言常见易混易犯错误（C语言陷阱与缺陷前三章基础内容总结）](https://zhuanlan.zhihu.com/p/168784500)
+* 21st Century C
+    * https://github.com/b-k/21st-Century-Examples
+    * 直接跑程式碼，看程式碼，不用買書 ....
 
-## 避免陷阱
+## 避免陷阱的總體方法
 
 1. gcc 總是加上 -Wall
 2. 使用有 lint 的編輯器
 3. 在 Linux/POSIX 環境中寫 C 語言，然後善用外部函式庫
     * 例如 glib2, sqlite, gsl
+    * 參考 https://github.com/b-k/21st-Century-Examples
     * 繪圖程式可用 SDL2 套件
     * 凡事都自己重來很累，也很容易出錯 ...
     * C 語言預設沒有 map, hashtable ，不代表你得用 C++ ...
-    * Windows 底下可以安裝 WSL 或 msys2，不需要非得用 Visual Studio ...
+    * Windows 底下可以安裝 WSL 或 msys2，不需要非得用 Visual Studio ... 
+    * sscanf 某種程度上可以代替正規表達式。
 4. 用 valgrind 檢查記憶體漏洞
+5. 向 UNIX/Linux 與 C 語言標準函式庫學習 C 的程式設計
+    * https://github.com/riscv2os/riscv2os/wiki
+    * 別總是想著要在 Windows 上用 Visual Studio 工具開發 C 語言
+    * 真的要跨 Windows/Mac/Linux 的 C 程式，幾乎都會使用 CMake
+    * https://cliutils.gitlab.io/modern-cmake/
 
 ## 基本陷阱
 
 1. = 和 == 誤用
+    * if (a=5) ...
 2. switch case 忘記加 break
 3. 懸掛的 else
-    * 總是加上 {}
+    * 應該習慣加上 {}
 4. < 和 <= 誤用
 5. scanf 沒加上位址
     * char a; scanf("%c", a);
@@ -48,13 +60,23 @@
 14. C 語言預設非 unicode，中文逐字處理必須使用 wchar_t 或套件
     * [C 語言中的寬字串](https://shengwen1997.gitbooks.io/program_with_c/content/wide_string.html)
     * [寬窄字串間的轉換](https://shengwen1997.gitbooks.io/program_with_c/content/wide_narrow_transform.html)
-5. 字串長度多少才夠呢？
+15. 字串長度多少才夠呢？
     * https://shengwen1997.gitbooks.io/program_with_c/content/string_wrong_using.html
+16. 運算子優先順序不確定時，請加上 ()
+    * a&b + c*d
+    * (a&b) + (c*d)
+17. 在不同的編譯器上， int 的長度不同，可能是2/4/8 bytes
+18. unsigned 的轉換
+    * char c = 0x80; unsigned int a = 0; int b = 0, d=0; 
+    * a = c; //c將首先被轉換為int型別，由於存在符號位擴充套件，a=0xffffff80
+    * b = c; //c將首先被轉換為int型別，由於存在符號位擴充套件，b=0xffffff80
+    * d = (unsigned char)c;//c是無符號型別，不會進行符號位擴充套件,d=0x00000080
 
 ## 指標陷阱
 
-1. 指標亂指 
-    * 或使用超出陣列範圍
+1. 指標亂指，或使用超出陣列範圍
+    * int *p; p=100; *p = 3;
+    * int a[10]; *p=a; p+=10; *p = 3;
 2. 有 malloc 沒有 free，或者沒 malloc 卻 free 了
     * 或者重複的 free 
 3. 指標指向區域變數後傳回 (堆疊已回收)
@@ -89,7 +111,8 @@
 4. 避免太常用 malloc() (大塊分配比小塊分配好除錯)
     * 例如： int a[1000]; 比 int *a[1000]; a[i]=malloc(...) 好除錯。
     * C 語言的標準函式庫，絕大部分都避免使用 malloc() // 除了 strdup() ...
-
+5. 不要拿著指標參數當區域變數用。
+    * void f(int a[], int *p) { for (*p=a; ; *p++) a[*p]=... }
 
 ## 疑問
 
@@ -100,6 +123,7 @@
 
 1. 善用結構
     * [結構的初始化](https://shengwen1997.gitbooks.io/program_with_c/content/struct_init.html)
+    * (struct point) {.x=3.0, .y=5.0}
 2. 利用巨集簡化語法
     * [鏈結串列:Linux 核心](https://shengwen1997.gitbooks.io/program_with_c/content/linking_list_external_object.html)
 3. 善用函數指標
@@ -107,8 +131,18 @@
 4. 當物件化會更好的時候
     * [以 C 語言實作物件封裝](https://shengwen1997.gitbooks.io/program_with_c/content/encapsulation.html)
     * [Jserv's blog:以 C 語言實做 Javascript 的 prototype 特性](http://blog.linux.org.tw/~jserv/archives/002057.html)
-5. 奇技淫巧只在必要時使用
+5. 奇技淫巧只在必要時使用 (總要進階到專業級，但不要濫用奇技淫巧)
     * [以 C 語言實做 Functional Language 的 Currying](http://blog.linux.org.tw/~jserv/archives/002029.html)
 6. 必要時可以用字串化 #var 或 token 化 var##..)
     * [https://shengwen1997.gitbooks.io/program_with_c/content/Stringification.html](https://shengwen1997.gitbooks.io/program_with_c/content/Stringification.html)
-7. 正確使用 #pragma once 或引用防護 #ifndef
+7. 學會寫 *.h 檔，正確使用 #pragma once 或引用防護 #ifndef
+    * #ifndef __XXX__ #define __XXX__ ... #endif
+    * #pragma once
+8. 大一點的專案，應該分模組，並且撰寫 Makefile
+    * Linux 上還有 automake, 但要跨 Linux/Windows 平台得用 CMake
+9. 學會用 assert 
+10. 學會用 gcc 預先定義的巨集標記，像是 __FILE__, __LINE__
+    * #define ASSERT(cond) if (!cond) printf("Assertion (" #cond ") fail!\nFile: %s, Line %d\n", __FILE__, __LINE__);
+11. 學會用 variadic ，特別是巨集中的 ...
+    * #define check(cond, fmt, ...) { if (cond) printf(fmt, __VA_ARGS__); assert(cond); }
+    * 自己寫個簡單的 sprintf 或 sscanf ，只要支援 %c %d %s 就行了。
