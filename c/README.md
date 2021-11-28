@@ -8,6 +8,12 @@
 
 1. gcc 總是加上 -Wall
 2. 使用有 lint 的編輯器
+3. 在 Linux/POSIX 環境中寫 C 語言，然後善用外部函式庫
+    * 例如 glib2, sqlite, gsl
+    * 繪圖程式可用 SDL2 套件
+    * 凡事都自己重來很累，也很容易出錯 ...
+    * C 語言預設沒有 map, hashtable ，不代表你得用 C++ ...
+4. 用 valgrind 檢查記憶體漏洞
 
 ## 基本陷阱
 
@@ -86,7 +92,8 @@
 
 ## 疑問
 
-1. EOF 是甚麼？ (看 fget.c)
+1. EOF 是甚麼？ 
+    * 看 [fget.c](./std/fget.c)
 
 ## 提高品質
 
