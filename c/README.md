@@ -33,6 +33,7 @@
     * 或者小型的編譯器 (c4/rubi/shecc)
     * c4 -- https://github.com/ccc-c/c4/wiki
     * 或者 xv6 這樣的教學型作業系統 https://github.com/riscv2os/riscv2os/wiki
+    * xv6 -- https://github.com/riscv2os/riscv2os/tree/master/xv6
     * 向 UNIX/Linux 學習是很好的方式
     * 自製 C 語言標準函式庫也可以學到很多
 
