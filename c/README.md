@@ -6,7 +6,7 @@
 * [C语言常见易混易犯错误（C语言陷阱与缺陷前三章基础内容总结）](https://zhuanlan.zhihu.com/p/168784500)
 * 21st Century C
     * https://github.com/b-k/21st-Century-Examples
-    * 直接跑程式碼，看程式碼，不用買書 ....
+    * 直接跑在 Linux 中程式碼，看程式碼，不用買書 ....
 
 ## 避免陷阱的總體方法
 
@@ -38,7 +38,7 @@
 ## 基本陷阱
 
 1. = 和 == 誤用
-    * if (a=5) ...
+    * `if (a=5) ...`
 2. switch case 忘記加 break
 3. 懸掛的 else
     * 應該習慣加上 {}
@@ -54,7 +54,7 @@
 8. 轉型所造成的問題 (兩邊型態應相同，不同須強制轉型，勿濫用)
     * 常數 unsigned 應加上 u，例如 37u，浮點應加上 .0，例如 3.0
 9. i++ 與 ++i 不同。
-    * `int i=1, j=2; i++ = ++j;`
+    * `int i=1, j=2; i++ = ++j;` 該如何解讀呢？
 10. macro 應在所有參數使用時加括號。
     * `#define SQUARE(x) (x*x)`
     * 呼叫 `SQUARE(10-5)` 會如何？
@@ -62,7 +62,7 @@
     * 不加 () 的話，若呼叫 `MAX(a==1, 5)` 會如何？
 11. 不要在 stack 設置過大的變數以避免堆疊溢位(stack overflow)
     * `void f() { char a[10000000]; ... }`
-12. 浮點數是有誤差的，別用 == `
+12. 浮點數是有誤差的，別用 `float a=0.1, b=0.2; if (a+b==0.3) ... `
 13. 應用 strncpy() 取代 strcpy(), snprintf() 取代 sprintf()
     * 避免 buffer overflow 的問題
 14. C 語言預設非 unicode，中文逐字處理必須使用 wchar_t 或套件
@@ -111,8 +111,8 @@
 
 ## 參數傳遞
 
-1. 參數傳回可用 return，勿過度用指標型參數去傳回。
-    * `void f(char *p, int *a, char **pp, int *ap[])`
+1. 參數傳回可用 return，勿過度用指標型參數去回傳。
+    * `void f(char *p, int *a, char **pp, int *ap[])` // 這不太好 ....
 2. 參數盡量加上 const
     * 一律用 `const char*` 定義字串常數
 3. 參數中的指標 `*p` 與陣列 `p[]` 同義，但一般宣告時意義不同。
@@ -126,6 +126,8 @@
 
 1. EOF 是甚麼？ 
     * 看 [fget.c](./std/fget.c)
+    * EOF 是 int, 不是 char ，這樣才不會有任何一個 char 真的是 EOF。
+    * `while ((c=fgetc(f)) != EOF) {...}`
 
 ## 提高品質
 
