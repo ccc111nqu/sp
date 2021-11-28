@@ -12,7 +12,7 @@
 
 1. gcc 總是加上 -Wall
 2. 使用有 lint 的編輯器
-3. 在 Linux/POSIX 環境中寫 C 語言，然後善用外部函式庫
+3. 溶入 Linux/POSIX 的環境寫 C 語言，然後善用外部函式庫
     * 例如 glib2, sqlite, gsl
     * 參考 https://github.com/b-k/21st-Century-Examples
     * 繪圖程式可用 SDL2 套件
@@ -20,16 +20,20 @@
     * C 語言預設沒有 map, hashtable ，不代表你得用 C++ ...
     * Windows 底下可以安裝 WSL 或 msys2，不需要非得用 Visual Studio ... 
     * sscanf 某種程度上可以代替正規表達式。
-4. 用 valgrind 檢查記憶體漏洞
-5. 向 UNIX/Linux 與 C 語言標準函式庫學習 C 的程式設計
-    * https://github.com/riscv2os/riscv2os/wiki
     * 別總是想著要在 Windows 上用 Visual Studio 工具開發 C 語言
     * 真的要跨 Windows/Mac/Linux 的 C 程式，幾乎都會使用 CMake
     * https://cliutils.gitlab.io/modern-cmake/
-6. C 語言比較適合做系統程式，或者需要速度很快的程式
+4. 用 valgrind 檢查記憶體漏洞
+5. C 語言比較適合做系統程式，或者需要速度很快的程式
     * 像是 Compiler/OS/VM/Assembler/嵌入式系統 或 Linux/POSIX 上的那些系統程式
     * 不需要速度快的，或許用 Python 就行了！
     * 網站前端得用 JavaScript, 手機 App 得用 Swift/Kotlin/C#/Dart(Flutter), 遊戲得用 C# ，不要企圖用一種語言做所有事情。
+6. 要學好更專業的 C 語言，建議向 github 上的高品質程式碼學習
+    * 像是 jserv 的作品 (mini-arm-os/rv32emu-next/sehttpd/simplefs)
+    * 或者小型的編譯器 (c4/rubi/shecc)
+    * 或者 xv6 這樣的教學型作業系統 https://github.com/riscv2os/riscv2os/wiki
+    * 向 UNIX/Linux 學習是很好的方式
+    * 自製 C 語言標準函式庫也可以學到很多
 
 ## 基本陷阱
 
