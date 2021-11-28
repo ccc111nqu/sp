@@ -17,7 +17,7 @@
     * 參考 https://github.com/b-k/21st-Century-Examples
     * 繪圖程式可用 SDL2 套件
     * 凡事都自己重來很累，也很容易出錯 ...
-    * C 語言預設沒有 map, hashtable ，不代表你得用 C++ ...
+    * C 語言預設沒有 map, hashtable ，不代表你得用 C++ ... (glib2 有且很好用)
     * Windows 底下可以安裝 WSL 或 msys2，不需要非得用 Visual Studio ... 
     * sscanf 某種程度上可以代替正規表達式。
     * 別總是想著要在 Windows 上用 Visual Studio 工具開發 C 語言
@@ -27,10 +27,11 @@
 5. C 語言比較適合做系統程式，或者需要速度很快的程式
     * 像是 Compiler/OS/VM/Assembler/嵌入式系統 或 Linux/POSIX 上的那些系統程式
     * 不需要速度快的，或許用 Python 就行了！
-    * 網站前端得用 JavaScript, 手機 App 得用 Swift/Kotlin/C#/Dart(Flutter), 遊戲得用 C# ，不要企圖用一種語言做所有事情。
+    * 網站前端得用 JavaScript, 手機 App 得用 Swift/Kotlin/C#/Dart(Flutter), 遊戲得用 C#+Unity ，不要企圖用一種語言做所有事情。
 6. 要學好更專業的 C 語言，建議向 github 上的高品質程式碼學習
     * 像是 jserv 的作品 (mini-arm-os/rv32emu-next/sehttpd/simplefs)
     * 或者小型的編譯器 (c4/rubi/shecc)
+    * c4 -- https://github.com/ccc-c/c4/wiki
     * 或者 xv6 這樣的教學型作業系統 https://github.com/riscv2os/riscv2os/wiki
     * 向 UNIX/Linux 學習是很好的方式
     * 自製 C 語言標準函式庫也可以學到很多
