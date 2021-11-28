@@ -26,6 +26,10 @@
     * 別總是想著要在 Windows 上用 Visual Studio 工具開發 C 語言
     * 真的要跨 Windows/Mac/Linux 的 C 程式，幾乎都會使用 CMake
     * https://cliutils.gitlab.io/modern-cmake/
+6. C 語言比較適合做系統程式，或者需要速度很快的程式
+    * 像是 Compiler/OS/VM/Assembler/嵌入式系統 或 Linux/POSIX 上的那些系統程式
+    * 不需要速度快的，或許用 Python 就行了！
+    * 網站前端得用 JavaScript, 手機 App 得用 Swift/Kotlin/C#/Dart(Flutter), 遊戲得用 C# ，不要企圖用一種語言做所有事情。
 
 ## 基本陷阱
 
