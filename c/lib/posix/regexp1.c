@@ -6,11 +6,11 @@
 
 int main(){
     regex_t preg; // 宣告編譯結果變數
-    const char* pattern = "^[a-z0-9_]+@([a-z0-9-]+\\.)+[a-z0-9]+$"; // 定義表示式
+    const char* pattern = "[a-z0-9_]+@([a-z0-9-]+\\.)+[a-z0-9]+"; // 定義表示式
     int success = regcomp(&preg, pattern, REG_EXTENDED|REG_ICASE); // 編譯，這邊使用 ERE，且不考慮大小寫
     assert(success==0);
 
-    char* target = "testmail_10@gmail.com";   //目標字串
+    char* target = "name:ccc email:ccckmit@gmail.com  age:50";   //目標字串
     regmatch_t matchptr[1];   // 記錄匹配結果陣列，長度為1僅記錄 full match
     const size_t nmatch = 1;    //  matchptr陣列長度
     int status = regexec(&preg, target, nmatch, matchptr, 0); //匹配
