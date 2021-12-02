@@ -19,6 +19,7 @@ iso
 
 # python
 __pycache__
+*.pyd
 
 # deno
 
