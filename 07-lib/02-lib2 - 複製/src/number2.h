@@ -50,8 +50,14 @@
               double: name##_d \
 )(x, y)
 
-_dec_fxy(add);
+_dec_fxy(_add);
+_dec_fxy(_sub);
+_dec_fxy(_mul);
+_dec_fxy(_div);
 
-#define add(x,y) _generic_fxy(add,x,y)
+#define _add(x,y) _generic_fxy(_add,x,y)
+#define _sub(x,y) _generic_fxy(_sub,x,y)
+#define _mul(x,y) _generic_fxy(_mul,x,y)
+#define _div(x,y) _generic_fxy(_div,x,y)
 
 // _dec_fxy(add) // ?? error
