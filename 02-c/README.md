@@ -7,6 +7,9 @@
 * 21st Century C
     * https://github.com/b-k/21st-Century-Examples
     * 直接跑在 Linux 中程式碼，看程式碼，不用買書 ....
+* https://zh.wikipedia.org/wiki/C99
+* https://zh.wikipedia.org/wiki/C11
+* [你所不知道的 C 語言](https://hackmd.io/@aben20807/SkKmpWbYm/%2Fs%2Fryh81f-tm?type=book)
 
 ## 避免陷阱的總體方法
 

@@ -1,7 +1,7 @@
-# 1 "test1.c"
+# 1 "std2_test.c"
 # 1 "<built-in>"
 # 1 "<command-line>"
-# 1 "test1.c"
+# 1 "std2_test.c"
 # 1 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h" 1 3
 # 9 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h" 3
 # 1 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/crtdefs.h" 1 3
@@ -878,7 +878,7 @@ void __attribute__((__cdecl__)) __mingw_str_free(void *ptr);
 
 # 1 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_print_pop.h" 1 3
 # 1400 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h" 2 3
-# 2 "test1.c" 2
+# 2 "std2_test.c" 2
 # 1 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/string.h" 1 3
 # 45 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/string.h" 3
   __attribute__ ((__dllimport__)) void *__attribute__((__cdecl__)) _memccpy(void *_Dst,const void *_Src,int _Val,size_t _MaxCount);
@@ -1085,7 +1085,7 @@ void __attribute__((__cdecl__)) __mingw_str_free(void *ptr);
     return _src ? wcsnlen(_src, _count) : 0;
   }
 # 191 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/string.h" 2 3
-# 3 "test1.c" 2
+# 3 "std2_test.c" 2
 # 1 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h" 1 3
 # 10 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h" 3
        
@@ -1548,9 +1548,10 @@ __extension__ long long __attribute__((__cdecl__)) llrintl (long double);
    extern long double __attribute__((__cdecl__)) _chgsignl (long double);
 # 1581 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h" 3
 #pragma pack(pop)
-# 4 "test1.c" 2
-# 1 "../src/clib2.h" 1
+# 4 "std2_test.c" 2
+# 1 "../src/std2.h" 1
        
+
 
 # 1 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h" 1 3
 # 10 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h" 3
@@ -2163,33 +2164,48 @@ void * __mingw_aligned_realloc (void *_Memory, size_t _Size, size_t _Offset);
 # 209 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/malloc.h" 3
 #pragma pack(pop)
 # 742 "C:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h" 2 3
-# 4 "../src/clib2.h" 2
-# 5 "test1.c" 2
+# 5 "../src/std2.h" 2
+# 1 "C:/Program Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/8.1.0/include/stdbool.h" 1 3 4
+# 6 "../src/std2.h" 2
+# 38 "../src/std2.h"
+
+# 38 "../src/std2.h"
+extern void _putf(double x);
+extern void _puti(int x);
+extern void *_new0(int size, char *file, int line);
+# 5 "std2_test.c" 2
+
+int square_i(int x) { return x*x; } double square_d(double x) { return x*x; } _Generic((x), int: square_i, double: square_d )(x)
 
 
-# 6 "test1.c"
-int main() {
+
+double add(double x, double y) { return x+y; }
+
+int main(void) {
   int one=1, two=2;
-  do { if (!(one==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "test1.c", 8); printf("\033[1;32m  Check:%s but ", "one==1"); printf("one==%d\n", one); printf("\033[0m\n"); } } while (0);
-  do { if (!(two==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "test1.c", 9); printf("\033[1;32m  Check:%s but ", "two==1"); printf("two==%d\n", two); printf("\033[0m\n"); } } while (0);
-  do { if (!(one==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "test1.c", 10); printf("\033[1;32m  Check:%s but ", "one==1"); printf("one==%d\n", one); printf("\033[0m\n"); } } while (0);
-  do { if (!(two==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "test1.c", 11); printf("\033[1;32m  Check:%s but ", "two==1"); printf("two==%d\n", two); printf("\033[0m\n"); } } while (0);
+  do { if (!(one==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "std2_test.c", 14); printf("\033[1;32m  Check:%s but ", "one==1"); printf("one==%d\n", one); printf("\033[0m\n"); } } while (0);
+  do { if (!(two==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "std2_test.c", 15); printf("\033[1;32m  Check:%s but ", "two==1"); printf("two==%d\n", two); printf("\033[0m\n"); } } while (0);
+  do { if (!(one==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "std2_test.c", 16); printf("\033[1;32m  Check:%s but ", "one==1"); printf("one==%d\n", one); printf("\033[0m\n"); } } while (0);
+  do { if (!(two==1)) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "std2_test.c", 17); printf("\033[1;32m  Check:%s but ", "two==1"); printf("two==%d\n", two); printf("\033[0m\n"); } } while (0);
 
-  int a[] = { 1, 2, 3 }, b[3];
-  for (int i=0; i<3; i++) { printf("%d ", a[i]); }; printf("\n");
-  for (int i=0; i<3; i++) { b[i] = ({ float lambda$__anon$ (float x) { return x*x; } &lambda$__anon$; })(a[i]); };
-  for (int i=0; i<3; i++) { printf("%d ", b[i]); }; printf("\n");
+  int a[] = { 1, 2, 3 }, *b = _new0(sizeof(int)*3, "std2_test.c", 19);
+  for (int i=0; i<3; i++) { _puti(a[i]); }; printf("\n");
+  for (int i=0; i<3; i++) { b[i] = square(a[i]); };
+  for (int i=0; i<3; i++) { _puti(b[i]); }; printf("\n");
 
-  double f[] = { 1.0, 2.0, 3.0, 4.0 }, *g = ({ void *p=malloc(sizeof(double)*4); do { if (!(p!=
-# 18 "test1.c" 3
-                                           ((void *)0)
-# 18 "test1.c"
-                                           )) { printf("\033[1;31mError: at FILE=%s LINE=%d\033[0m\n", "test1.c", 18); printf("\033[1;32m  Check:%s but ", "p!=NULL"); printf("_new() fail\n"); printf("\033[0m\n"); } } while (0); p; });
-  for (int i=0; i<4; i++) { printf("%f ", f[i]); }; printf("\n");
-  for (int i=0; i<4; i++) { g[i] = ({ float lambda$__anon$ (float x) { return x*2.0; } &lambda$__anon$; })(f[i]); };
-  for (int i=0; i<4; i++) { printf("%f ", g[i]); }; printf("\n");
+  int c[3];
+  for (int i=0; i<3; i++) { c[i] = add(a[i], b[i]); };
+  for (int i=0; i<3; i++) { _puti(c[i]); }; printf("\n");
+  { free(b);b=
+# 27 "std2_test.c" 3
+ ((void *)0)
+# 27 "std2_test.c"
+ ; };
 
-  double h[4];
-  for (int i=0; i<4; i++) { h[i] = ({ float lambda$__anon$ (float x, float y) { return x+y; } &lambda$__anon$; })(f[i], g[i]); };
-  for (int i=0; i<4; i++) { printf("%f ", h[i]); }; printf("\n");
+  int *d=_new0(sizeof(int)*999999999, "std2_test.c", 29);
+  { free(d);d=
+# 30 "std2_test.c" 3
+ ((void *)0)
+# 30 "std2_test.c"
+ ; };
 }

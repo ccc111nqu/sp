@@ -15,20 +15,7 @@
 #define _map2(a, b, n, f, r) \
     for (int i=0; i<n; i++) { \
         r[i] = f(a[i], b[i]); \
-    }
-
-// https://stackoverflow.com/questions/10405436/anonymous-functions-using-gcc-statement-expressions
-// https://github.com/wd5gnr/clambda/blob/master/clambda2.c
-// https://hackaday.com/2019/09/11/lambdas-for-c-sort-of/
-#define _lambda(lambda$_ret, lambda$_args, lambda$_body)\
-  ({\
-    lambda$_ret lambda$__anon$ lambda$_args\
-      lambda$_body\
-    &lambda$__anon$;\
-  })
-
-#define _fx(type, exp) _lambda(type, (type x), { return exp; })
-#define _fxy(type, exp) _lambda(type, (type x, type y), { return exp; })
+    } 
 
 // https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
 // https://en.wikipedia.org/wiki/ANSI_escape_code
@@ -41,9 +28,11 @@
      printf("\033[0m\n"); \
   } } while (0)
 
+// GCC has a feature called statement expressions
+// https://stackoverflow.com/questions/3532621/using-and-returning-output-in-c-macro
 #define _new(type, size) ({ \
     void *p=malloc(sizeof(type)*size);\
-    _test(p!=NULL, "_new() fail\n"); \
+    _test(p, "_new() fail\n"); \
     p;\
   })
 
@@ -54,6 +43,7 @@
   })
 
 #define _putf(x) printf("%f ", x)
-#define _puti(x) printf("%d ", x)
+#define _puti(x) printf("%d ", x) 
 
 #define _line printf("\n")
+ 
