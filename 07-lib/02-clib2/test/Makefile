@@ -20,7 +20,7 @@ std2_test: std2_test.c $(LIBS)
 gnu2_test: gnu2_test.c $(LIBS)
 	$(CC) $(OPTS) $^ -o $@
 
-generic2_test: generic2_test.c $(LIBS)
+generic2_test: generic2_test.c ../src/generic2.c $(LIBS)
 	$(CC) $(OPTS) $^ -o $@
 
 std2_run:

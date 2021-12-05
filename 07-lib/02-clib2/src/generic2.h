@@ -24,9 +24,17 @@
   }
 
 #define _def_fxy(name, exp) \
-  _def_fxyt(int, name##_i, exp) \
-  _def_fxyt(double, name##_d, exp) \
-  _def_fxyt(double complex, name##_c, exp)
+  _def_fxyt(int, name##_i, exp); \
+  _def_fxyt(double, name##_d, exp); \
+  _def_fxyt(double complex, name##_c, exp);
+
+#define _dec_fxyt(type, name) \
+  type name(type x, type y)
+
+#define _dec_fxy(name) \
+  _dec_fxyt(int, name##_i); \
+  _dec_fxyt(double, name##_d); \
+  _dec_fxyt(double complex, name##_c);
 
 #define _generic_fx(name, x) _Generic((x), \
               int: name##_i, \
@@ -36,13 +44,10 @@
 
 #define _generic_fxy(name, x, y) _Generic((x), \
               int: name##_i, \
-              double complex: name##_c \
-              double: name##_d, \
+              double complex: name##_c, \
+              double: name##_d \
 )(x, y)
 
-
-// double add(double x, double y) { return x+y; }
-
-_dec_fx(add);
-
 #define add(x,y) _generic_fxy(add,x,y)
+
+// _dec_fxy(add); // ?? error
