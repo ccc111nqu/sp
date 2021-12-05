@@ -1,14 +1,7 @@
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <std2.h>
 #include <generic2.h>
 
 _def_fx(square, x*x);
-
 #define square(x) _generic_fx(square,x) 
-
-_def_fxy(add, x+y);
 
 int main(void) {
   int a[] = {1,2,3}, b[3];

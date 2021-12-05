@@ -1,5 +1,7 @@
 #pragma once
 
+#include <std2.h>
+
 #define _def_fxt(type, name, exp) \
   type name(type x) { \
     return exp; \
@@ -48,6 +50,8 @@
               double: name##_d \
 )(x, y)
 
+_dec_fxy(add);
+
 #define add(x,y) _generic_fxy(add,x,y)
 
-// _dec_fxy(add); // ?? error
+// _dec_fxy(add) // ?? error
