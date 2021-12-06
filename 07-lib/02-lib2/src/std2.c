@@ -8,7 +8,7 @@ void _puti(int x) {
     printf("%d ", x);
 }
 
-void _putc(double complex x) {
+void _putc(_c64 x) {
     printf("%.4f+%.4fi ", creal(x), cimag(x));
 }
 

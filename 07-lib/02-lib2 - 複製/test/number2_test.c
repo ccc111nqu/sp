@@ -1,4 +1,4 @@
-#include <generic2.h>
+#include <number2.h>
 
 _def_fx(square, x*x);
 #define square(x) _generic_fx(square,x) 

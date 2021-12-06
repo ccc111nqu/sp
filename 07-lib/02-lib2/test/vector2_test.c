@@ -8,7 +8,11 @@ int main(void) {
   _each(b, 3, _put); _line;
   _each(c, 3, _put); _line;
 
+  int csum = _vsum(c, 3);
+  printf("csum=%d\n", csum);
+  
   double da[]={1.0,2.0,3.0}, db[]={2.0,2.0,2.0}, dc[3];
   _vmul(da, db, dc, 3);
   _each(dc, 3, _put); _line;
+
 }
