@@ -14,7 +14,7 @@ void name(type *a, type *b, type *c, int size) { \
 #define _def_vop(name, op) \
   _def_vop_t(int, name##_i, op); \
   _def_vop_t(double, name##_d, op); \
-  _def_vop_t(_c64, name##_c, op)
+  _def_vop_t(_c64_t, name##_c, op)
 
 #define _dec_vop_t(type, name) \
 void name(type *a, type *b, type *c, int size)
@@ -22,11 +22,11 @@ void name(type *a, type *b, type *c, int size)
 #define _dec_vop(name) \
   _dec_vop_t(int, name##_i); \
   _dec_vop_t(double, name##_d); \
-  _dec_vop_t(_c64, name##_c);
+  _dec_vop_t(_c64_t, name##_c);
 
 #define _generic_vop(name, a, b, c, n) _Generic((a), \
               int*: name##_i, \
-              _c64*: name##_c, \
+              _c64_t*: name##_c, \
               double*: name##_d \
 )(a, b, c, n)
 
@@ -59,16 +59,16 @@ type name(type a[], int n)
 #define _def_aop(name, start, op) \
   _def_aop_t(int, name##_i, start, op); \
   _def_aop_t(double, name##_d, start, op); \
-  _def_aop_t(_c64, name##_c, start, op)
+  _def_aop_t(_c64_t, name##_c, start, op)
 
 #define _dec_aop(name) \
   _dec_aop_t(int, name##_i); \
   _dec_aop_t(double, name##_d); \
-  _dec_aop_t(_c64, name##_c);
+  _dec_aop_t(_c64_t, name##_c);
 
 #define _generic_aop(name, a, n) _Generic((a), \
               int*: name##_i, \
-              _c64*: name##_c, \
+              _c64_t*: name##_c, \
               double*: name##_d \
 )(a, n)
 

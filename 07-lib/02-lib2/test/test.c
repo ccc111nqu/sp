@@ -6,9 +6,9 @@ int square_i(int x) { return x*x; }
 
 double square_d(double x) { return x*x; }
 
-double square_c(_c64 x) { return x*x; }
+double square_c(_c64_t x) { return x*x; }
 
-#define square(x) _Generic((x), int: square_i, double: square_d, _c64: square_c )(x)
+#define square(x) _Generic((x), int: square_i, double: square_d, _c64_t: square_c )(x)
 
 
 int main(){
