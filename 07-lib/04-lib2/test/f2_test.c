@@ -12,7 +12,7 @@ void test1() {
   // _MAP(a, n, square, b);
   #define sq(x) x*x
   _MAP(a, n, sq, b);
-  _EACH(b, n, _put); _BR;
+  _EACH(b, n, _PUT); _BR;
   _OK(!_ARRAY_EQ(a, b, int, n));
 
   int r = 0;
@@ -23,7 +23,7 @@ void test1() {
   int m;
   #define odd(x) (x%2==1)
   _FILTER(a, n, odd, b, m);
-  printf("filter(a, odd)="); _EACH(b, m, _put); _BR;
+  printf("filter(a, odd)="); _EACH(b, m, _PUT); _BR;
 
   #define even(x) (x%2==0)
   int eveni = _FIND(a, n, even);
@@ -55,44 +55,8 @@ void test3() {
   _OK(_ANY(a, c, n, _GT));
 }
 
-void f_test1() {
-  int a[]={ 1, 2, 3 };
-  int n = _LEN(a);
- 
-  _each(a, n, _puti); _BR;
-
-/*
-  int b[n];
-  // _MAP(a, n, square, b);
-  #define sq(x) x*x
-  _MAP(a, n, sq, b);
-  _EACH(b, n, _put); _BR;
-  _OK(!_ARRAY_EQ(a, b, int, n));
-
-  int r = 0;
-  // #define cadd(t, x) (t+x)
-  _REDUCE(a, n, cadd, r);
-  printf("r=%d\n", r);
-
-  int m;
-  #define odd(x) (x%2==1)
-  _FILTER(a, n, odd, b, m);
-  printf("filter(a, odd)="); _EACH(b, m, _put); _BR;
-
-  #define even(x) (x%2==0)
-  int eveni = _FIND(a, n, even);
-  _OK(eveni==1);
-
-  char str[100];
-  _STR(a, n, str); printf("a:str=%s\n", str);
-  _STR(b, n, str); printf("b:str=%s\n", str);
-*/
-}
-
-
 int main(void) {
   test1();
   test2();
   test3();
-  f_test1();
 }

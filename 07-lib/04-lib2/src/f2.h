@@ -1,12 +1,13 @@
-#include "f2.h"
+#pragma once
 
-void _each(void* a[], char type, int n, void (*f)(void*)) {
-    for (int i=0; i<n; i++) {
-        f(a[i]);
+#include "std2.h"
+#include <string.h>
+
+#define _EACH(a, n, f) \
+    for (int i=0; i<n; i++) { \
+        f(a[i]); \
     }
-}
 
-/*
 #define _MAP(a, n, f, r) \
     for (int i=0; i<n; i++) { \
         r[i] = f(a[i]); \
@@ -38,7 +39,7 @@ void _each(void* a[], char type, int n, void (*f)(void*)) {
   int ri = 0; \
   for (int i=0; i<n; i++) { \
       char *p = &r[ri]; \
-      _sput(p, a[i]); \
+      _SPUT(p, a[i]); \
       ri+=strlen(p); \
   } \
 }
@@ -92,5 +93,3 @@ void _each(void* a[], char type, int n, void (*f)(void*)) {
   idx; \
 })
 
-
-*/

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "std2.h"
 #include <string.h>
 
 #define _EACH(a, n, f) \
@@ -92,4 +93,4 @@
   idx; \
 })
 
-
+void _each(int a[], int n, void (*f)(int a));
