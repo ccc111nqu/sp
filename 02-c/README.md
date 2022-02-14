@@ -1,5 +1,9 @@
 # C -- 避免陷阱，提高品質的方法
 
+* [簡明 C 語言入門教學](https://blog.techbridge.cc/2020/05/03/simple-c-language-introduction-tutorial/)
+* [C Programming, NTICSIE](https://www.youtube.com/playlist?list=PLOvZ8aEg7xDmRtTbeWHGKAkXI8ZkcyAhe)
+
+## 陷阱
 * [C/C++ 語言新手十三誡 (PTT)](https://www.ptt.cc/bbs/C_and_CPP/M.1465304337.A.9F2.html)
 * [《C陷阱與缺陷》 閱讀總結](https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/429214/)
 * [高等C語言](https://shengwen1997.gitbooks.io/program_with_c/content/index.html)
@@ -10,6 +14,7 @@
 * https://zh.wikipedia.org/wiki/C99
 * https://zh.wikipedia.org/wiki/C11
 * [你所不知道的 C 語言](https://hackmd.io/@aben20807/SkKmpWbYm/%2Fs%2Fryh81f-tm?type=book)
+
 
 ## 避免陷阱的總體方法
 

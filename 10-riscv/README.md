@@ -7,3 +7,4 @@
 * xv6net -- 來自 https://github.com/monkey2000/xv6-riscv-fall19
     * 網誌 -- https://blog.mky.moe/mit6828/menu/
     * 備份 -- https://github.com/cccriscv/xv6-riscv-fall19-1
+* [AwesomeCS](https://github.com/ianchen0119/AwesomeCS/wiki)
