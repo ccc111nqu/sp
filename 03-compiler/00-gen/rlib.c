@@ -23,7 +23,5 @@ char *randSelect(char* array[], int size) {
 
 void timeSeed() {
   long ltime = time(NULL);
-  // printf("ltime=%ld\n", ltime);
-  int stime = (unsigned) ltime/2;
-  srand(stime);
+  srand(ltime);
 }
