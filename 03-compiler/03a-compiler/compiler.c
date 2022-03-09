@@ -92,7 +92,7 @@ void WHILE() {
 // STMT = WHILE | BLOCK | ASSIGN
 void STMT() {
   if (isNext("while"))
-    return WHILE();
+    WHILE();
   // else if (isNext("if"))
   //   IF();
   else if (isNext("{"))

@@ -57,7 +57,7 @@ void genOp2(int i, int i1, char op, int i2) {
   printf("M=D\n");
 }
 
-// F =  Number | '(' E ')'
+// F =  Number | ID | '(' E ')'
 int F() {
   int f;
   char c = ch();
@@ -97,7 +97,7 @@ void parse(char *str) {
 int main(int argc, char * argv[]) {
   printf("=== EBNF Grammar =====\n");
   printf("E=F ([+-] F)*\n");
-  printf("F=Number | '(' E ')'\n");
+  printf("F=Number | ID | '(' E ')'\n");
   printf("==== parse:%s ========\n", argv[1]);
   parse(argv[1]);
 }
