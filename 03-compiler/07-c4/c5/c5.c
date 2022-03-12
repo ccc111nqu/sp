@@ -12,11 +12,13 @@
 #include <memory.h>
 #include <unistd.h>
 #include <fcntl.h>
+#define int long long
 
 char *p, *lp, // current position in source code (p: 目前原始碼指標, lp: 上一行原始碼指標)
-     *data;   // data/bss pointer (資料段機器碼指標)
+     *data,*data0, // data/bss pointer (資料段機器碼指標)
+     *op;     // 指令字串列表
 
-int *e, *le,  // current position in emitted code (e: 目前機器碼指標, le: 上一行機器碼指標)
+int *e, *le, *code0, // current position in emitted code (e: 目前機器碼指標, le: 上一行機器碼指標)
     *id,      // currently parsed identifier (id: 目前的 id)
     *sym,     // symbol table (simple list of identifiers) (符號表)
     tk,       // current token (目前 token)
@@ -35,7 +37,7 @@ enum { // token : 0-127 直接用該字母表達， 128 以後用代號。
 };
 
 // opcodes (機器碼的 op)
-enum { LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,
+enum { LEA ,IMM ,ADDR,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,
        OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,
        OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT };
 
@@ -57,10 +59,8 @@ void next() // 詞彙解析 lexer
         printf("%d: %.*s", line, p - lp, lp); // 印出該行
         lp = p; // lp = p = 新一行的原始碼開頭
         while (le < e) { // 印出上一行的所有目的碼
-          printf("%8.4s", &"LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
-                           "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
-                           "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[*++le * 5]);
-          if (*le <= ADJ) printf(" %d\n", *++le); else printf("\n"); // LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ 有一個參數。
+          printf(" %d %8.4s", le, &op[*++le * 5]);
+          if (*le <= ADJ) printf(" %d\n", *++le); else printf("\n"); // ADJ 之前有一個參數，之後沒有參數。
         }
       }
       ++line;
@@ -139,7 +139,7 @@ void expr(int lev) // 運算式 expression, 其中 lev 代表優先等級
   if (!tk) { printf("%d: unexpected eof in expression\n", line); exit(-1); } // EOF
   else if (tk == Num) { *++e = IMM; *++e = ival; next(); ty = INT; } // 數值
   else if (tk == '"') { // 字串
-    *++e = IMM; *++e = ival; next();
+    *++e = ADDR; *++e = ival; next();
     while (tk == '"') next();
     data = (char *)((int)data + sizeof(int) & -sizeof(int)); ty = PTR; // 用 int 為大小對齊 ??
   }
@@ -440,14 +440,12 @@ int run(int *pc, int *bp, int *sp) { // 虛擬機 => pc: 程式計數器, sp: �
   while (1) {
     i = *pc++; ++cycle;
     if (debug) {
-      printf("%d> %.4s", cycle,
-        &"LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
-         "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
-         "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[i * 5]);
+      printf("%d> %d %.4s", cycle, pc, &op[i * 5]);
       if (i <= ADJ) printf(" %d\n", *pc); else printf("\n");
     }
     if      (i == LEA) a = (int)(bp + *pc++);                             // load local address 載入區域變數
-    else if (i == IMM) a = *pc++;                                         // load global address or immediate 載入全域變數或立即值
+    else if (i == IMM) a = *pc++;                                         // load immediate 載入立即值
+    else if (i == ADDR) { a = *pc; pc++; }                                // load address 載入位址
     else if (i == JMP) pc = (int *)*pc;                                   // jump               躍躍指令
     else if (i == JSR) { *--sp = (int)(pc + 1); pc = (int *)*pc; }        // jump to subroutine 跳到副程式
     else if (i == BZ)  pc = a ? pc + 1 : (int *)*pc;                      // branch if zero     if (a==0) goto m[pc]
@@ -506,14 +504,17 @@ int main(int argc, char **argv) // 主程式
 
   poolsz = 256*1024; // arbitrary size
   if (!(sym = malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; } // 符號段
-  if (!(le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; } // 程式段
-  if (!(data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; } // 資料段
+  if (!(code0 = le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; } // 程式段
+  if (!(data0 = data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; } // 資料段
   if (!(sp = malloc(poolsz))) { printf("could not malloc(%d) stack area\n", poolsz); return -1; }  // 堆疊段
 
   memset(sym,  0, poolsz);
   memset(e,    0, poolsz);
   memset(data, 0, poolsz);
 
+  op = "LEA ,IMM ,ADDR,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
+                           "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
+                           "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,";
   p = "char else enum if int return sizeof while "
       "open read close printf malloc free memset memcmp exit void main";
   i = Char; while (i <= While) { next(); id[Tk] = i++; } // add keywords to symbol table
@@ -533,10 +534,10 @@ int main(int argc, char **argv) // 主程式
 
   // setup stack
   bp = sp = (int *)((int)sp + poolsz);
-  *--sp = EXIT; // call exit if main returns
+  *--sp = EXIT;     // call exit if main returns
   *--sp = PSH; t = sp;
-  *--sp = argc;
-  *--sp = (int)argv;
-  *--sp = (int)t;
+  *--sp = argc;     // 把 argc,argv 放入堆疊，這樣 main(argc,argv) 才能取得到
+  *--sp = (int)argv; 
+  *--sp = (int)t;   // 推入返回點，於是最後 RET 時會跳回 t=sp 指定的位址，接著呼叫 EXIT 離開。
   return run(pc, bp, sp);
 }

@@ -60,7 +60,7 @@ void next()
         printf("%d: %.*s", line, p - lp, lp);
         lp = p;
         while (le < e) {
-          printf(" %04x %8.4s", le-code0, &"LEA ,IMM ,STR ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
+          printf(" %04X %8.4s", le-code0, &"LEA ,IMM ,STR ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
                            "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
                            "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[*++le * 5]);
           if (*le <= ADJ) {
@@ -68,9 +68,9 @@ void next()
               if (ir == STR)
                 printf("%d\n", (char*)*le-data0);
               else if (ir == JMP || ir == JSR)
-                printf("%04x\n", (int*)*le-code0);
+                printf("%04X\n", (int*)*le-code0);
               else if (ir == BZ || ir == BNZ) {
-                if (*le==0) printf("0?\n"); else printf("%04x\n", (int*)*le-code0);
+                if (*le==0) printf("0?\n"); else printf("%04X\n", (int*)*le-code0);
               } else
                 printf("%d\n", *le); 
           } else printf("\n");
@@ -459,10 +459,9 @@ int run(int *pc, int *bp, int *sp) {
         if (i == STR)
           printf("%d\n", (char*)*pc-data0);
         else if (i == JMP || i == JSR || i == BZ || i == BNZ)
-          printf("%04x\n", (int*)*pc-code0);
+          printf("%04X\n", (int*)*pc-code0);
         else
           printf("%d\n", *pc); 
-        // printf(" %d\n", *pc); 
       } else printf("\n");
     }
     if      (i == LEA) a = (int)(bp + *pc++);                             // load local address
@@ -511,6 +510,26 @@ int run(int *pc, int *bp, int *sp) {
   }
 }
 
+// O_RDWR|O_CREAT=0402
+void saveObj(char *objFile, int *pcode, int codeLen, int *pdata, int dataLen, int pc) {
+  int f, iSize, codeSize;
+
+  iSize = sizeof(int);
+  codeSize = codeLen*iSize;
+
+  f = open(objFile, 0402,0666);
+  write(f, pcode, iSize);
+  write(f, &codeSize, iSize);
+  write(f, pdata, iSize);
+  write(f, &dataLen, iSize);
+  write(f, &pc, iSize);
+  write(f, code0, codeSize);
+  write(f, data0, dataLen);
+  close(f);
+  printf("code0=%d codeSize=%d data0=%d dataLen=%d pc=%04x\n", code0, codeSize, data0, dataLen, pc);
+  printf("pcode=%d pdata=%d *pcode=%d *pdata=%d\n", pcode, pdata, *pcode, *pdata);
+}
+
 int main(int argc, char **argv)
 {
   int fd, poolsz, *idmain;
@@ -549,8 +568,10 @@ int main(int argc, char **argv)
   if (prog() == -1) return -1;
 
   if (!(pc = (int *)idmain[Val])) { printf("main() not defined\n"); return -1; }
-  if (src) return 0;
-
+  if (src) {
+    saveObj("a.out", &code0, le-code0, &data0, data-data0, pc);
+    return 0;
+  }
   // setup stack
   bp = sp = (int *)((int)sp + poolsz);
   *--sp = EXIT; // call exit if main returns

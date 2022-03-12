@@ -11,12 +11,12 @@
 #include <memory.h>
 #include <unistd.h>
 #include <fcntl.h>
-#define int long long
+#define int long
 
 char *p, *lp, // current position in source code
-     *data, *data0;   // data/bss pointer
+     *data;   // data/bss pointer
 
-int *e, *le, *code0, // current position in emitted code
+int *e, *le,  // current position in emitted code
     *id,      // currently parsed identifier
     *sym,     // symbol table (simple list of identifiers)
     tk,       // current token
@@ -35,7 +35,7 @@ enum {
 };
 
 // opcodes
-enum { LEA ,IMM ,STR ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,
+enum { LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,
        OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,
        OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT };
 
@@ -48,7 +48,6 @@ enum { Tk, Hash, Name, Class, Type, Val, HClass, HType, HVal, Idsz };
 void next()
 {
   char *pp;
-  int ir;
 
   while (tk = *p) {
     ++p;
@@ -57,18 +56,10 @@ void next()
         printf("%d: %.*s", line, p - lp, lp);
         lp = p;
         while (le < e) {
-          printf(" %04x %8.4s", le-code0, &"LEA ,IMM ,STR ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
+          printf("%8.4s", &"LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
                            "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
                            "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[*++le * 5]);
-          if (*le <= ADJ) {
-              ir = *le++;
-              if (ir == STR)
-                printf("%d\n", (char*)*le-data0);
-              else if (ir == JMP || ir == JSR)
-                printf("%04x\n", (int*)*le-code0);
-              else
-                printf("%d\n", *le); 
-          } else printf("\n");
+          if (*le <= ADJ) printf(" %d\n", *++le); else printf("\n");
         }
       }
       ++line;
@@ -147,7 +138,7 @@ void expr(int lev)
   if (!tk) { printf("%d: unexpected eof in expression\n", line); exit(-1); }
   else if (tk == Num) { *++e = IMM; *++e = ival; next(); ty = INT; }
   else if (tk == '"') {
-    *++e = STR; *++e = ival; next();
+    *++e = IMM; *++e = ival; next();
     while (tk == '"') next();
     data = (char *)((int)data + sizeof(int) & -sizeof(int)); ty = PTR;
   }
@@ -354,8 +345,8 @@ int main(int argc, char **argv)
 
   poolsz = 256*1024; // arbitrary size
   if (!(sym = malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; }
-  if (!(code0 = le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; }
-  if (!(data0 = data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; }
+  if (!(le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; }
+  if (!(data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; }
   if (!(sp = malloc(poolsz))) { printf("could not malloc(%d) stack area\n", poolsz); return -1; }
 
   memset(sym,  0, poolsz);
@@ -486,14 +477,13 @@ int main(int argc, char **argv)
     i = *pc++; ++cycle;
     if (debug) {
       printf("%d> %.4s", cycle,
-        &"LEA ,IMM ,STR ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
+        &"LEA ,IMM ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
          "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
          "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[i * 5]);
       if (i <= ADJ) printf(" %d\n", *pc); else printf("\n");
     }
     if      (i == LEA) a = (int)(bp + *pc++);                             // load local address
     else if (i == IMM) a = *pc++;                                         // load global address or immediate
-    else if (i == STR) a = *pc++;                                         // load string
     else if (i == JMP) pc = (int *)*pc;                                   // jump
     else if (i == JSR) { *--sp = (int)(pc + 1); pc = (int *)*pc; }        // jump to subroutine
     else if (i == BZ)  pc = a ? pc + 1 : (int *)*pc;                      // branch if zero
