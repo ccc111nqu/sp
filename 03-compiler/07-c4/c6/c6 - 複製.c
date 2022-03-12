@@ -1,13 +1,10 @@
-// c6.c - C in six functions
+// c4.c - C in four functions
 
 // char, int, and pointer types
 // if, while, return, and expression statements
 // just enough features to allow self-compilation and a bit more
-// c4 created by Robert Swierczek
 
-// c6 was extended from c4 by ccckmit, 
-// 1. extract code as prog(), run() module
-// 2. -s -d dump in readable assembly format
+// Written by Robert Swierczek
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,9 +66,7 @@ void next()
                 printf("%d\n", (char*)*le-data0);
               else if (ir == JMP || ir == JSR)
                 printf("%04x\n", (int*)*le-code0);
-              else if (ir == BZ || ir == BNZ) {
-                if (*le==0) printf("0?\n"); else printf("%04x\n", (int*)*le-code0);
-              } else
+              else
                 printf("%d\n", *le); 
           } else printf("\n");
         }
@@ -344,9 +339,42 @@ void stmt()
   }
 }
 
-int prog() {
-  int bt, i;
+int main(int argc, char **argv)
+{
+  int fd, bt, ty, poolsz, *idmain;
+  int *pc, *sp, *bp, a, cycle; // vm registers
+  int i, *t; // temps
 
+  --argc; ++argv;
+  if (argc > 0 && **argv == '-' && (*argv)[1] == 's') { src = 1; --argc; ++argv; }
+  if (argc > 0 && **argv == '-' && (*argv)[1] == 'd') { debug = 1; --argc; ++argv; }
+  if (argc < 1) { printf("usage: c4 [-s] [-d] file ...\n"); return -1; }
+
+  if ((fd = open(*argv, 0)) < 0) { printf("could not open(%s)\n", *argv); return -1; }
+
+  poolsz = 256*1024; // arbitrary size
+  if (!(sym = malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; }
+  if (!(code0 = le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; }
+  if (!(data0 = data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; }
+  if (!(sp = malloc(poolsz))) { printf("could not malloc(%d) stack area\n", poolsz); return -1; }
+
+  memset(sym,  0, poolsz);
+  memset(e,    0, poolsz);
+  memset(data, 0, poolsz);
+
+  p = "char else enum if int return sizeof while "
+      "open read close printf malloc free memset memcmp exit void main";
+  i = Char; while (i <= While) { next(); id[Tk] = i++; } // add keywords to symbol table
+  i = OPEN; while (i <= EXIT) { next(); id[Class] = Sys; id[Type] = INT; id[Val] = i++; } // add library to symbol table
+  next(); id[Tk] = Char; // handle void type
+  next(); idmain = id; // keep track of main
+
+  if (!(lp = p = malloc(poolsz))) { printf("could not malloc(%d) source area\n", poolsz); return -1; }
+  if ((i = read(fd, p, poolsz-1)) <= 0) { printf("read() returned %d\n", i); return -1; }
+  p[i] = 0;
+  close(fd);
+
+  // parse declarations
   line = 1;
   next();
   while (tk) {
@@ -440,13 +468,19 @@ int prog() {
     }
     next();
   }
-  return 0;
-}
 
-int run(int *pc, int *bp, int *sp) {
-  int a, cycle; // vm registers
-  int i, *t; // temps
+  if (!(pc = (int *)idmain[Val])) { printf("main() not defined\n"); return -1; }
+  if (src) return 0;
 
+  // setup stack
+  bp = sp = (int *)((int)sp + poolsz);
+  *--sp = EXIT; // call exit if main returns
+  *--sp = PSH; t = sp;
+  *--sp = argc;
+  *--sp = (int)argv;
+  *--sp = (int)t;
+
+  // run...
   cycle = 0;
   while (1) {
     i = *pc++; ++cycle;
@@ -455,15 +489,7 @@ int run(int *pc, int *bp, int *sp) {
         &"LEA ,IMM ,STR ,JMP ,JSR ,BZ  ,BNZ ,ENT ,ADJ ,LEV ,LI  ,LC  ,SI  ,SC  ,PSH ,"
          "OR  ,XOR ,AND ,EQ  ,NE  ,LT  ,GT  ,LE  ,GE  ,SHL ,SHR ,ADD ,SUB ,MUL ,DIV ,MOD ,"
          "OPEN,READ,CLOS,PRTF,MALC,FREE,MSET,MCMP,EXIT,"[i * 5]);
-      if (i <= ADJ) {
-        if (i == STR)
-          printf("%d\n", (char*)*pc-data0);
-        else if (i == JMP || i == JSR || i == BZ || i == BNZ)
-          printf("%04x\n", (int*)*pc-code0);
-        else
-          printf("%d\n", *pc); 
-        // printf(" %d\n", *pc); 
-      } else printf("\n");
+      if (i <= ADJ) printf(" %d\n", *pc); else printf("\n");
     }
     if      (i == LEA) a = (int)(bp + *pc++);                             // load local address
     else if (i == IMM) a = *pc++;                                         // load global address or immediate
@@ -509,55 +535,4 @@ int run(int *pc, int *bp, int *sp) {
     else if (i == EXIT) { printf("exit(%d) cycle = %d\n", *sp, cycle); return *sp; }
     else { printf("unknown instruction = %d! cycle = %d\n", i, cycle); return -1; }
   }
-}
-
-int main(int argc, char **argv)
-{
-  int fd, poolsz, *idmain;
-  int *pc, *sp, *bp; // vm registers
-  int i, *t; // temps
-
-  --argc; ++argv;
-  if (argc > 0 && **argv == '-' && (*argv)[1] == 's') { src = 1; --argc; ++argv; }
-  if (argc > 0 && **argv == '-' && (*argv)[1] == 'd') { debug = 1; --argc; ++argv; }
-  if (argc < 1) { printf("usage: c4 [-s] [-d] file ...\n"); return -1; }
-
-  if ((fd = open(*argv, 0)) < 0) { printf("could not open(%s)\n", *argv); return -1; }
-
-  poolsz = 256*1024; // arbitrary size
-  if (!(sym = malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; }
-  if (!(code0 = le = e = malloc(poolsz))) { printf("could not malloc(%d) text area\n", poolsz); return -1; }
-  if (!(data0 = data = malloc(poolsz))) { printf("could not malloc(%d) data area\n", poolsz); return -1; }
-  if (!(sp = malloc(poolsz))) { printf("could not malloc(%d) stack area\n", poolsz); return -1; }
-
-  memset(sym,  0, poolsz);
-  memset(e,    0, poolsz);
-  memset(data, 0, poolsz);
-
-  p = "char else enum if int return sizeof while "
-      "open read close printf malloc free memset memcmp exit void main";
-  i = Char; while (i <= While) { next(); id[Tk] = i++; } // add keywords to symbol table
-  i = OPEN; while (i <= EXIT) { next(); id[Class] = Sys; id[Type] = INT; id[Val] = i++; } // add library to symbol table
-  next(); id[Tk] = Char; // handle void type
-  next(); idmain = id; // keep track of main
-
-  if (!(lp = p = malloc(poolsz))) { printf("could not malloc(%d) source area\n", poolsz); return -1; }
-  if ((i = read(fd, p, poolsz-1)) <= 0) { printf("read() returned %d\n", i); return -1; }
-  p[i] = 0;
-  close(fd);
-
-  if (prog() == -1) return -1;
-
-  if (!(pc = (int *)idmain[Val])) { printf("main() not defined\n"); return -1; }
-  if (src) return 0;
-
-  // setup stack
-  bp = sp = (int *)((int)sp + poolsz);
-  *--sp = EXIT; // call exit if main returns
-  *--sp = PSH; t = sp;
-  *--sp = argc;
-  *--sp = (int)argv;
-  *--sp = (int)t;
-
-  return run(pc, bp, sp);
 }
