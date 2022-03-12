@@ -434,7 +434,7 @@ int prog() { // 編譯整個程式 Program
 
 int run(int *pc, int *bp, int *sp) { // 虛擬機 => pc: 程式計數器, sp: 堆疊暫存器, bp: 框架暫存器
   int a, cycle; // a: 累積器, cycle: 執行指令數
-  int i, *t;    // i: instruction, t:temps
+  int i, *t;    // temps
 
   cycle = 0;
   while (1) {

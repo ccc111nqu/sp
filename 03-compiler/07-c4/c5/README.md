@@ -1,4 +1,4 @@
-# C4 -- 500 行的 C 語言編譯器 (修改版, 所以改叫 C5)
+# C5 -- 500 行的 C 語言編譯器 (修改自 c4, 改叫 C5)
 
 C in four functions
 
@@ -6,6 +6,8 @@ C in four functions
 * 作者 -- https://github.com/rswier/
 * 來源 -- https://github.com/rswier/c4
 * 原理說明 -- [doc](doc)
+
+BUG: 改完後就不能 self compile 了 ....
 
 ## 使用方式
 
