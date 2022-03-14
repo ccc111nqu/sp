@@ -18,3 +18,6 @@ int obj_load(int fd) {
   pc = code0 + (entry-codep);
   obj_relocate(code0, codeLen, codep, datap, code0, data0);
 }
+```
+
+所以目前只能在 linux 當中跑。

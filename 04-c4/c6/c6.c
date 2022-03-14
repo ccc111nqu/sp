@@ -556,9 +556,9 @@ int obj_relocate(int *code, int codeLen, int *pcode1, char *pdata1, int *pcode2,
     if (ir <= ADJ) {
       ++p;
       if (ir == ADDR)
-        *p = *p+(pdata2-pdata1);
+        *p = (int)(pdata2+((char*)*p-pdata1));
       else if (ir==JSR || ir==JMP || ir==BZ  || ir==BNZ)
-        *p = *p+(pcode2-pcode1);
+        *p = (int)(pcode2+((int*)*p-pcode1));
     }
   }
 }
@@ -585,7 +585,8 @@ int obj_dump(int *entry, int *code, int codeLen, char *data, int dataLen) {
 
 int obj_save(char *oFile, int *entry, int *code, int codeLen, char *data, int dataLen) {
   int fd, len;
-  fd = open(oFile, 01101); // O_CREAT|O_WRONLY|O_TRUNC=01101
+  // fd = open(oFile, 01101); // Linux: O_CREAT|O_WRONLY|O_TRUNC=01101
+  fd = open(oFile, 0101401); // Windows: O_BINARY|O_CREAT|O_WRONLY|O_TRUNC=0101401
   if (fd == -1) return -1;
   write(fd, &entry, sizeof(int));
   write(fd, &code, sizeof(int));
@@ -607,7 +608,7 @@ int obj_load(int fd) {
   read(fd, &datap, sizeof(int));
   read(fd, &dataLen, sizeof(int));
   len = read(fd, code0, codeLen*sizeof(int));
-  if (len != codeLen*sizeof(int)) { printf("obj_load:read fail, len < size\n"); exit(1); }
+  if (len != codeLen*sizeof(int)) { printf("obj_load:read fail, len(%d) < size(%d)\n", len, codeLen*sizeof(int)); exit(1); }
   len = read(fd, data0, dataLen);
   pc = code0 + (entry-codep);
   obj_relocate(code0, codeLen, codep, datap, code0, data0);
@@ -632,7 +633,8 @@ int main(int argc, char **argv) // 主程式
     }
   }
 
-  if ((fd = open(iFile, 0)) < 0) { printf("could not open(%s)\n", iFile); return -1; }
+  // if ((fd = open(iFile, 0)) < 0) { printf("could not open(%s)\n", iFile); return -1; }
+  if ((fd = open(iFile, 0100000)) < 0) { printf("could not open(%s)\n", iFile); return -1; }
 
   poolsz = 256*1024; // arbitrary size
   if (!(sym = malloc(poolsz))) { printf("could not malloc(%d) symbol area\n", poolsz); return -1; } // 符號段
