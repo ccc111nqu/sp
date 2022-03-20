@@ -610,8 +610,8 @@ int obj_load(int fd) {
   len = read(fd, code0, codeLen*sizeof(int));
   if (len != codeLen*sizeof(int)) { printf("obj_load:read fail, len(%d) < size(%d)\n", len, codeLen*sizeof(int)); exit(1); }
   len = read(fd, data0, dataLen);
-  pc = code0 + (entry-codep);
   obj_relocate(code0, codeLen, codep, datap, code0, data0);
+  pc = code0 + (entry-codep);
 }
 
 int main(int argc, char **argv) // 主程式
